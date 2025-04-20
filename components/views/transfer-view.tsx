@@ -68,7 +68,7 @@ export function TransferView() {
               <button
                 onClick={() => goToStep(step.id)}
                 disabled={index > currentStepIndex}
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center ${
                   index < currentStepIndex
                     ? "bg-green-500 text-black cursor-pointer"
                     : index === currentStepIndex
@@ -76,20 +76,47 @@ export function TransferView() {
                       : "bg-zinc-800 text-zinc-400 cursor-not-allowed"
                 }`}
               >
-                {index < currentStepIndex ? <Check className="h-4 w-4" /> : index + 1}
+                {index < currentStepIndex ? <Check className="h-3 w-3 sm:h-4 sm:w-4" /> : index + 1}
               </button>
               {index < steps.length - 1 && (
-                <div className={`h-0.5 w-24 ${index < currentStepIndex ? "bg-green-500" : "bg-zinc-800"}`}></div>
+                <div
+                  className={`h-0.5 w-3 sm:w-8 md:w-12 lg:w-24 ${
+                    index < currentStepIndex ? "bg-green-500" : "bg-zinc-800"
+                  }`}
+                ></div>
               )}
             </div>
           ))}
         </div>
-        <div className="flex mt-2 text-xs text-zinc-500">
+
+        {/* Desktop labels - hidden on small screens */}
+        <div className="hidden sm:flex mt-2 text-xs text-zinc-500">
           {steps.map((step, index) => (
             <React.Fragment key={`label-${step.id}`}>
-              <div className="w-8 text-center">{index + 1}</div>
-              <div className={`w-24 text-center ${index < steps.length - 1 ? "" : ""}`}>{step.title}</div>
+              <div className="w-6 sm:w-8 text-center">{index + 1}</div>
+              <div className={`w-3 sm:w-8 md:w-12 lg:w-24 text-center ${index < steps.length - 1 ? "" : ""}`}>
+                {step.title}
+              </div>
             </React.Fragment>
+          ))}
+        </div>
+
+        {/* Mobile labels - only shown on small screens */}
+        <div className="flex sm:hidden mt-2 justify-between text-[10px] text-zinc-500 px-1">
+          {steps.map((step, index) => (
+            <div key={`mobile-${step.id}`} className="text-center">
+              {index === 0
+                ? "Asset"
+                : index === 1
+                  ? "Recip"
+                  : index === 2
+                    ? "Legal"
+                    : index === 3
+                      ? "Pay"
+                      : index === 4
+                        ? "Review"
+                        : "Done"}
+            </div>
           ))}
         </div>
       </div>

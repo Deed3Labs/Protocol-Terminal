@@ -68,10 +68,19 @@
   overflow: hidden;
 }
 
+/* Updated terminal header styles with responsive height */
 .terminal-header {
-  @apply bg-zinc-950 border-b border-zinc-800 px-4 py-2 text-xs flex items-center justify-between;
+  @apply bg-zinc-950 border-b border-zinc-800 px-2 sm:px-4 py-2 text-xs flex items-center justify-between;
   flex-shrink: 0;
-  height: 2.5rem;
+  height: 3rem;
+  width: 100%;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .terminal-header {
+    height: 3.5rem; /* Taller header on mobile and tablet */
+  }
 }
 
 .terminal-sidebar {
@@ -89,6 +98,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   height: 100%;
+  padding-bottom: 2rem; /* Add padding to account for footer */
 }
 
 .terminal-content {
@@ -97,10 +107,18 @@
   min-height: 100%;
 }
 
+/* Footer positioning for mobile devices */
 .terminal-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  height: auto;
+  padding-bottom: env(safe-area-inset-bottom, 0);
   @apply bg-zinc-950 border-t border-zinc-800 px-4 py-2 text-xs flex items-center justify-between;
   flex-shrink: 0;
-  height: 2rem;
+  min-height: 2rem;
 }
 
 .terminal-card {
@@ -198,4 +216,64 @@
   .terminal-sidebar.hidden {
     transform: translateX(-100%);
   }
+}
+
+/* Extra small screen utility */
+@media (min-width: 400px) {
+  .xs\:inline-block {
+    display: inline-block;
+  }
+}
+
+/* Sidebar overlay animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.sidebar-overlay-enter {
+  animation: fadeIn 0.2s forwards;
+}
+
+.sidebar-overlay-exit {
+  animation: fadeOut 0.2s forwards;
+}
+
+/* Command palette mobile styling */
+@media (max-width: 640px) {
+  .command-palette-mobile {
+    margin: 0.75rem;
+    width: calc(100% - 1.5rem);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+}
+
+/* Command palette animations */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.command-palette-enter {
+  animation: scaleIn 0.2s ease-out;
 }

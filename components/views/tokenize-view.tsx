@@ -74,7 +74,7 @@ export function TokenizeView() {
           {[1, 2, 3, 4].map((s) => (
             <div key={s} className="flex items-center">
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center ${
                   s < step
                     ? "bg-green-500 text-black"
                     : s === step
@@ -82,21 +82,33 @@ export function TokenizeView() {
                       : "bg-zinc-800 text-zinc-400"
                 }`}
               >
-                {s < step ? <Check className="h-4 w-4" /> : s}
+                {s < step ? <Check className="h-3 w-3 sm:h-4 sm:w-4" /> : s}
               </div>
-              {s < 4 && <div className={`h-0.5 w-24 ${s < step ? "bg-green-500" : "bg-zinc-800"}`}></div>}
+              {s < 4 && (
+                <div className={`h-0.5 w-6 sm:w-12 md:w-16 lg:w-24 ${s < step ? "bg-green-500" : "bg-zinc-800"}`}></div>
+              )}
             </div>
           ))}
         </div>
-        <div className="flex mt-2 text-xs text-zinc-500">
-          <div className="w-8 text-center">1</div>
-          <div className="w-24 text-center">Asset Details</div>
-          <div className="w-8 text-center">2</div>
-          <div className="w-24 text-center">Properties</div>
-          <div className="w-8 text-center">3</div>
-          <div className="w-24 text-center">Documentation</div>
-          <div className="w-8 text-center">4</div>
-          <div className="w-24 text-center">Complete</div>
+
+        {/* Desktop labels - hidden on small screens */}
+        <div className="hidden sm:flex mt-2 text-xs text-zinc-500">
+          <div className="w-6 sm:w-8 text-center">1</div>
+          <div className="w-6 sm:w-12 md:w-16 lg:w-24 text-center">Asset Details</div>
+          <div className="w-6 sm:w-8 text-center">2</div>
+          <div className="w-6 sm:w-12 md:w-16 lg:w-24 text-center">Properties</div>
+          <div className="w-6 sm:w-8 text-center">3</div>
+          <div className="w-6 sm:w-12 md:w-16 lg:w-24 text-center">Documentation</div>
+          <div className="w-6 sm:w-8 text-center">4</div>
+          <div className="w-6 sm:w-12 md:w-16 lg:w-24 text-center">Complete</div>
+        </div>
+
+        {/* Mobile labels - only shown on small screens */}
+        <div className="flex sm:hidden mt-2 justify-between text-[10px] text-zinc-500 px-1">
+          <div className="text-center">Asset</div>
+          <div className="text-center">Props</div>
+          <div className="text-center">Docs</div>
+          <div className="text-center">Done</div>
         </div>
       </div>
 

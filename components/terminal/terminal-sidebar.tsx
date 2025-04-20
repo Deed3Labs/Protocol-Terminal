@@ -33,12 +33,28 @@ interface TerminalSidebarProps {
 export function TerminalSidebar({ collapsed = false, onToggle, onClose }: TerminalSidebarProps) {
   const router = useRouter()
   const pathname = usePathname()
-  const { setCurrentPath, setLastCommand, activeView, setActiveView } = useTerminal()
+  const { setActiveTab, activeView, setActiveView, setLastCommand, setCurrentPath, addToHistory } = useTerminal()
 
   const handleNavigation = (view: string, command: string) => {
-    setLastCommand(command)
-    setActiveView(view)
-    if (window.innerWidth < 640) {
+    // Set the active tab and view
+    setActiveTab(view)
+    setActiveView(view as any)
+
+    // Update command history
+    if (typeof setLastCommand === "function") {
+      setLastCommand(command)
+    }
+
+    // Add to command history
+    addToHistory(command)
+
+    // Update current path based on view
+    if (typeof setCurrentPath === "function") {
+      setCurrentPath(`/${view}`)
+    }
+
+    // Close sidebar on mobile
+    if (window.innerWidth < 1024) {
       onClose?.()
     }
   }
@@ -50,7 +66,7 @@ export function TerminalSidebar({ collapsed = false, onToggle, onClose }: Termin
         className={cn(
           "terminal-sidebar-collapsed transition-all duration-300 ease-in-out",
           "w-12 border-r border-zinc-800 bg-black p-2 flex flex-col items-center overflow-y-auto",
-          "md:static fixed inset-y-0 left-0 z-40",
+          "lg:static fixed inset-y-0 left-0 z-40",
         )}
       >
         <div className="flex items-center justify-between w-full mb-4">
@@ -60,7 +76,7 @@ export function TerminalSidebar({ collapsed = false, onToggle, onClose }: Termin
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 text-zinc-400 hover:text-white md:hidden"
+            className="h-6 w-6 text-zinc-400 hover:text-white lg:hidden"
             onClick={onClose}
           >
             <X className="h-4 w-4" />
@@ -231,7 +247,7 @@ export function TerminalSidebar({ collapsed = false, onToggle, onClose }: Termin
       className={cn(
         "terminal-sidebar transition-all duration-300 ease-in-out",
         "w-48 border-r border-zinc-800 bg-black p-2 flex flex-col overflow-y-auto",
-        "md:static fixed inset-y-0 left-0 z-40",
+        "lg:static fixed inset-y-0 left-0 z-40",
       )}
     >
       <div className="flex items-center justify-between mb-4">
@@ -243,7 +259,7 @@ export function TerminalSidebar({ collapsed = false, onToggle, onClose }: Termin
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 text-zinc-400 hover:text-white md:hidden"
+            className="h-6 w-6 text-zinc-400 hover:text-white lg:hidden"
             onClick={onClose}
           >
             <X className="h-4 w-4" />

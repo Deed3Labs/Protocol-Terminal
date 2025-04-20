@@ -1,4 +1,4 @@
-"\"use client"
+"use client"
 
 import { AssetCard } from "@/components/asset-card"
 
@@ -74,15 +74,23 @@ const assets = [
 
 interface AssetGridProps {
   category?: string
+  compact?: boolean
+  onViewDetails?: (id: string) => void
 }
 
-export function AssetGrid({ category }: AssetGridProps) {
+export function AssetGrid({ category, compact = false, onViewDetails }: AssetGridProps) {
   const filteredAssets = category ? assets.filter((asset) => asset.category === category) : assets
 
+  const handleViewDetails = (id: string) => {
+    if (onViewDetails) {
+      onViewDetails(id)
+    }
+  }
+
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {filteredAssets.map((asset) => (
-        <AssetCard key={asset.id} {...asset} />
+        <AssetCard key={asset.id} {...asset} compact={compact} onViewDetails={handleViewDetails} />
       ))}
     </div>
   )

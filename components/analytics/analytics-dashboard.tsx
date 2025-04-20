@@ -10,6 +10,8 @@ import { AssetDistributionChart } from "@/components/analytics/asset-distributio
 import { AssetPerformanceTable } from "@/components/analytics/asset-performance-table"
 import { MarketTrendsChart } from "@/components/analytics/market-trends-chart"
 import { TransactionLog } from "@/components/analytics/transaction-log"
+import { PortfolioSummary } from "@/components/analytics/portfolio-summary"
+import { AlertsPanel } from "@/components/analytics/alerts-panel"
 
 export function AnalyticsDashboard() {
   return (
@@ -138,41 +140,84 @@ export function AnalyticsDashboard() {
               </CardContent>
             </Card>
           </div>
+
+          <div className="mt-6">
+            <Card className="bg-black border-terminal-green">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-terminal-green">Asset Performance</CardTitle>
+                <Button variant="ghost" size="sm" className="text-terminal-green hover:bg-terminal-green/10">
+                  <Download className="h-4 w-4" />
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <AssetPerformanceTable />
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="performance" className="mt-0">
-          <Card className="bg-black border-terminal-green">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-terminal-green">Asset Performance</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <AssetPerformanceTable />
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 gap-6">
+            <Card className="bg-black border-terminal-green">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-terminal-green">Portfolio Summary</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PortfolioSummary />
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="market" className="mt-0">
-          <Card className="bg-black border-terminal-green">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-terminal-green">Market Trends</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <MarketTrendsChart />
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 gap-6">
+            <Card className="bg-black border-terminal-green">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-terminal-green">Market Trends</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <MarketTrendsChart />
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="transactions" className="mt-0">
-          <Card className="bg-black border-terminal-green">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-terminal-green">Recent Transactions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <TransactionLog />
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 gap-6">
+            <Card className="bg-black border-terminal-green">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-terminal-green">Transaction Log</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <TransactionLog />
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <Card className="bg-black border-terminal-green">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-terminal-green">Recent Activity</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <TransactionLog limit={5} />
+            </CardContent>
+          </Card>
+        </div>
+        <div>
+          <Card className="bg-black border-terminal-green">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-terminal-green">Alerts</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <AlertsPanel />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   )
 }

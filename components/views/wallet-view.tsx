@@ -92,87 +92,42 @@ export function WalletView() {
       <div className="terminal-card mb-6">
         <h3 className="text-xs font-medium mb-4">TOKENS</h3>
         <div className="space-y-3">
-          <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center">
-                <span className="text-xs">DEED</span>
+          {[
+            { name: "USDC", balance: "1,250.00", value: "$1,250.00" },
+            { name: "LINK", balance: "45.75", value: "$685.50" },
+            { name: "UNI", balance: "12.5", value: "$112.25" },
+          ].map((token, i) => (
+            <div key={i} className="flex items-center justify-between py-2 border-b border-zinc-800 last:border-0">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center">
+                  <span className="text-xs">{token.name.substring(0, 3)}</span>
+                </div>
+                <div>
+                  <div className="text-sm font-medium">{token.name}</div>
+                  <div className="text-xs text-zinc-500">{token.balance}</div>
+                </div>
               </div>
-              <div>
-                <div className="text-sm">Deed Protocol</div>
-                <div className="text-xs text-zinc-500">ERC-20</div>
-              </div>
+              <div className="text-sm">{token.value}</div>
             </div>
-            <div className="text-right">
-              <div className="text-sm">1,250 DEED</div>
-              <div className="text-xs text-zinc-500">$3,750.00</div>
-            </div>
-          </div>
-          <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center">
-                <span className="text-xs">USDC</span>
-              </div>
-              <div>
-                <div className="text-sm">USD Coin</div>
-                <div className="text-xs text-zinc-500">ERC-20</div>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-sm">5,000 USDC</div>
-              <div className="text-xs text-zinc-500">$5,000.00</div>
-            </div>
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center">
-                <span className="text-xs">WETH</span>
-              </div>
-              <div>
-                <div className="text-sm">Wrapped Ethereum</div>
-                <div className="text-xs text-zinc-500">ERC-20</div>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-sm">1.5 WETH</div>
-              <div className="text-xs text-zinc-500">$4,875.00</div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
       <div className="terminal-card">
-        <h3 className="text-xs font-medium mb-4">RECENT TRANSACTIONS</h3>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
-            <div>
-              <div className="text-sm">Sent ETH</div>
-              <div className="text-xs text-zinc-500">To: 0x8f7d...e92a</div>
-            </div>
-            <div className="text-right">
-              <div className="text-sm text-red-500">-0.5 ETH</div>
-              <div className="text-xs text-zinc-500">2 hours ago</div>
-            </div>
-          </div>
-          <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
-            <div>
-              <div className="text-sm">Received USDC</div>
-              <div className="text-xs text-zinc-500">From: 0x3a1c...b47d</div>
-            </div>
-            <div className="text-right">
-              <div className="text-sm text-green-500">+1,000 USDC</div>
-              <div className="text-xs text-zinc-500">Yesterday</div>
-            </div>
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-sm">Swap ETH for DEED</div>
-              <div className="text-xs text-zinc-500">Uniswap V3</div>
-            </div>
-            <div className="text-right">
-              <div className="text-sm">1 ETH → 400 DEED</div>
-              <div className="text-xs text-zinc-500">3 days ago</div>
-            </div>
-          </div>
+        <h3 className="text-xs font-medium mb-4">ACTIONS</h3>
+        <div className="grid grid-cols-2 gap-2">
+          <Button variant="outline" size="sm" className="h-9 text-xs justify-start">
+            Send Assets
+          </Button>
+          <Button variant="outline" size="sm" className="h-9 text-xs justify-start">
+            Receive Assets
+          </Button>
+          <Button variant="outline" size="sm" className="h-9 text-xs justify-start">
+            Swap Tokens
+          </Button>
+          <Button variant="outline" size="sm" className="h-9 text-xs justify-start">
+            Transaction History
+          </Button>
         </div>
       </div>
     </div>

@@ -14,6 +14,7 @@ import {
   Star,
   ArrowUpDown,
   ChevronUp,
+  BarChart2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,6 +22,8 @@ import { useTerminal } from "@/components/terminal/terminal-provider"
 import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Checkbox } from "@/components/ui/checkbox"
+import { AssetCard } from "@/components/asset-card"
 
 // Sample asset data
 const assets = [
@@ -114,6 +117,8 @@ export function MyAssetsView() {
   const [favorites, setFavorites] = useState<Record<string, boolean>>(
     assets.reduce((acc, asset) => ({ ...acc, [asset.id]: asset.favorite }), {}),
   )
+  const [selectedAssets, setSelectedAssets] = useState<string[]>([])
+  const [isComparing, setIsComparing] = useState(false)
 
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category)
@@ -133,6 +138,40 @@ export function MyAssetsView() {
   const toggleFavorite = (id: string) => {
     setFavorites((prev) => ({ ...prev, [id]: !prev[id] }))
     addToHistory(`${favorites[id] ? "unfavorite" : "favorite"} --asset=${id}`)
+  }
+
+  const handleAssetSelect = (id: string) => {
+    setSelectedAssets((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((assetId) => assetId !== id)
+      } else {
+        return [...prev, id]
+      }
+    })
+  }
+
+  const handleCompare = () => {
+    if (selectedAssets.length >= 2) {
+      addToHistory(`compare --assets=${selectedAssets.join(",")}`)
+      setActiveView("asset-comparison")
+    }
+  }
+
+  const toggleCompareMode = () => {
+    setIsComparing(!isComparing)
+    if (!isComparing) {
+      setSelectedAssets([])
+    }
+  }
+
+  const handleViewDetails = (id: string) => {
+    addToHistory(`view --asset=${id}`)
+    setActiveView("asset-detail")
+  }
+
+  const handleTransfer = (id: string) => {
+    addToHistory(`transfer --asset=${id}`)
+    setActiveView("transfer")
   }
 
   const filteredAssets = assets.filter((asset) => {
@@ -199,15 +238,28 @@ export function MyAssetsView() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 bg-zinc-900 border-zinc-700 hover:bg-zinc-800 text-zinc-300"
-            onClick={() => setActiveView("tokenize")}
-          >
-            <Plus className="h-3.5 w-3.5 mr-1" />
-            Add Asset
-          </Button>
+          {isComparing ? (
+            <Button
+              variant="default"
+              size="sm"
+              className="h-8"
+              onClick={handleCompare}
+              disabled={selectedAssets.length < 2}
+            >
+              <BarChart2 className="h-3.5 w-3.5 mr-1" />
+              Compare ({selectedAssets.length})
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 bg-zinc-900 border-zinc-700 hover:bg-zinc-800 text-zinc-300"
+              onClick={() => setActiveView("tokenize")}
+            >
+              <Plus className="h-3.5 w-3.5 mr-1" />
+              Add Asset
+            </Button>
+          )}
         </div>
       </div>
 
@@ -251,6 +303,15 @@ export function MyAssetsView() {
             </Button>
           </div>
           <div className="flex items-center gap-2">
+            <Button
+              variant={isComparing ? "default" : "outline"}
+              size="sm"
+              className="h-7 text-xs"
+              onClick={toggleCompareMode}
+            >
+              <BarChart2 className="h-3.5 w-3.5 mr-1" />
+              {isComparing ? "Cancel Compare" : "Compare Assets"}
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="h-7 text-xs">
@@ -287,58 +348,20 @@ export function MyAssetsView() {
         </div>
 
         {viewMode === "grid" ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {sortedAssets.map((asset) => (
-              <div key={asset.id} className="terminal-card p-0 overflow-hidden">
-                <div className="aspect-square relative">
-                  <img
-                    src={asset.image || "/placeholder.svg"}
-                    alt={asset.name}
-                    className="h-full w-full object-cover"
-                  />
-                  <div className="absolute top-2 right-2 flex gap-2">
-                    <Badge variant={asset.status === "Verified" ? "default" : "secondary"}>{asset.status}</Badge>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute top-2 left-2 h-7 w-7 bg-black/50 hover:bg-black/70"
-                    onClick={() => toggleFavorite(asset.id)}
-                  >
-                    {favorites[asset.id] ? (
-                      <Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" />
-                    ) : (
-                      <Star className="h-3.5 w-3.5" />
-                    )}
-                  </Button>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-medium mb-1">{asset.name}</h3>
-                  <div className="flex items-center gap-2 mb-2">
-                    {asset.category === "real-estate" && <Building2 className="h-3.5 w-3.5 text-zinc-500" />}
-                    {asset.category === "vehicles" && <Car className="h-3.5 w-3.5 text-zinc-500" />}
-                    {asset.category === "equipment" && <Tractor className="h-3.5 w-3.5 text-zinc-500" />}
-                    <span className="text-xs text-zinc-500 capitalize">{asset.category.replace("-", " ")}</span>
-                  </div>
-                  <p className="text-xs text-zinc-500 mb-2 line-clamp-2">{asset.description}</p>
-                  <div className="flex items-center justify-between">
-                    <div className="text-xs text-zinc-500">Token ID</div>
-                    <div className="text-xs font-mono">{asset.tokenId.substring(0, 6)}...</div>
-                  </div>
-                  <div className="flex items-center justify-between mt-1">
-                    <div className="text-xs text-zinc-500">Value</div>
-                    <div className="text-sm font-bold">{asset.price}</div>
-                  </div>
-                </div>
-                <div className="border-t border-zinc-800 p-3 flex justify-between">
-                  <Button variant="ghost" size="sm" className="text-xs h-7">
-                    View Details
-                  </Button>
-                  <Button variant="ghost" size="sm" className="text-xs h-7">
-                    Transfer
-                  </Button>
-                </div>
-              </div>
+              <AssetCard
+                key={asset.id}
+                {...asset}
+                favorite={favorites[asset.id]}
+                isSelectable={isComparing}
+                isSelected={selectedAssets.includes(asset.id)}
+                onSelect={handleAssetSelect}
+                onToggleFavorite={toggleFavorite}
+                onViewDetails={handleViewDetails}
+                onTransfer={handleTransfer}
+                compact={false}
+              />
             ))}
           </div>
         ) : (
@@ -346,7 +369,10 @@ export function MyAssetsView() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[30px]"></TableHead>
+                  {isComparing && <TableHead className="w-[30px]"></TableHead>}
+                  <TableHead className={isComparing ? "w-[30px]" : "w-[30px]"}>
+                    {!isComparing && <span className="sr-only">Favorite</span>}
+                  </TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort("name")}>
                     <div className="flex items-center">
                       Name
@@ -361,7 +387,7 @@ export function MyAssetsView() {
                       )}
                     </div>
                   </TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort("category")}>
+                  <TableHead className="cursor-pointer hidden sm:table-cell" onClick={() => handleSort("category")}>
                     <div className="flex items-center">
                       Category
                       {sortColumn === "category" ? (
@@ -389,7 +415,7 @@ export function MyAssetsView() {
                       )}
                     </div>
                   </TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort("status")}>
+                  <TableHead className="cursor-pointer hidden md:table-cell" onClick={() => handleSort("status")}>
                     <div className="flex items-center">
                       Status
                       {sortColumn === "status" ? (
@@ -403,7 +429,7 @@ export function MyAssetsView() {
                       )}
                     </div>
                   </TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort("date")}>
+                  <TableHead className="cursor-pointer hidden lg:table-cell" onClick={() => handleSort("date")}>
                     <div className="flex items-center">
                       Acquisition Date
                       {sortColumn === "date" ? (
@@ -423,22 +449,32 @@ export function MyAssetsView() {
               <TableBody>
                 {sortedAssets.map((asset) => (
                   <TableRow key={asset.id}>
+                    {isComparing && (
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedAssets.includes(asset.id)}
+                          onCheckedChange={() => handleAssetSelect(asset.id)}
+                        />
+                      </TableCell>
+                    )}
                     <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 p-0"
-                        onClick={() => toggleFavorite(asset.id)}
-                      >
-                        {favorites[asset.id] ? (
-                          <Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" />
-                        ) : (
-                          <Star className="h-3.5 w-3.5" />
-                        )}
-                      </Button>
+                      {!isComparing && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 p-0"
+                          onClick={() => toggleFavorite(asset.id)}
+                        >
+                          {favorites[asset.id] ? (
+                            <Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" />
+                          ) : (
+                            <Star className="h-3.5 w-3.5" />
+                          )}
+                        </Button>
+                      )}
                     </TableCell>
                     <TableCell className="font-medium">{asset.name}</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <div className="flex items-center gap-2">
                         {asset.category === "real-estate" && <Building2 className="h-3.5 w-3.5 text-zinc-500" />}
                         {asset.category === "vehicles" && <Car className="h-3.5 w-3.5 text-zinc-500" />}
@@ -447,16 +483,28 @@ export function MyAssetsView() {
                       </div>
                     </TableCell>
                     <TableCell>{asset.price}</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden md:table-cell">
                       <Badge variant={asset.status === "Verified" ? "default" : "secondary"}>{asset.status}</Badge>
                     </TableCell>
-                    <TableCell>{new Date(asset.acquisitionDate).toLocaleDateString()}</TableCell>
+                    <TableCell className="hidden lg:table-cell">
+                      {new Date(asset.acquisitionDate).toLocaleDateString()}
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="sm" className="h-7 text-xs">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 text-xs"
+                          onClick={() => handleViewDetails(asset.id)}
+                        >
                           View
                         </Button>
-                        <Button variant="ghost" size="sm" className="h-7 text-xs">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 text-xs hidden sm:inline-flex"
+                          onClick={() => handleTransfer(asset.id)}
+                        >
                           Transfer
                         </Button>
                       </div>
@@ -475,13 +523,28 @@ export function MyAssetsView() {
           <span className="font-medium">{assets.length}</span> assets
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="h-7 text-xs">
-            Export Assets
-          </Button>
-          <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setActiveView("tokenize")}>
-            <Plus className="h-3.5 w-3.5 mr-1" />
-            Add Asset
-          </Button>
+          {isComparing ? (
+            <Button
+              variant="default"
+              size="sm"
+              className="h-7 text-xs"
+              onClick={handleCompare}
+              disabled={selectedAssets.length < 2}
+            >
+              <BarChart2 className="h-3.5 w-3.5 mr-1" />
+              Compare Selected ({selectedAssets.length})
+            </Button>
+          ) : (
+            <>
+              <Button variant="outline" size="sm" className="h-7 text-xs hidden sm:inline-flex">
+                Export Assets
+              </Button>
+              <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setActiveView("tokenize")}>
+                <Plus className="h-3.5 w-3.5 mr-1" />
+                Add Asset
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </div>

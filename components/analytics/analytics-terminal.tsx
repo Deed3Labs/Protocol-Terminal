@@ -15,9 +15,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Search, Filter, RefreshCw, Download, Clock, Calendar, ChevronDown } from "lucide-react"
 import { useTerminal } from "@/components/terminal/terminal-provider"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useNotifications } from "@/components/notifications/notification-provider"
 
 export function AnalyticsTerminal() {
   const { addToHistory } = useTerminal()
+  const { addNotification } = useNotifications()
   const [timeRange, setTimeRange] = useState<"1d" | "1w" | "1m" | "3m" | "6m" | "1y" | "all">("1m")
   const [activeTab, setActiveTab] = useState<"overview" | "portfolio" | "market" | "transactions" | "alerts">(
     "overview",
@@ -45,7 +47,44 @@ export function AnalyticsTerminal() {
       setLoadingProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval)
-          setTimeout(() => setIsLoading(false), 200)
+          setTimeout(() => {
+            setIsLoading(false)
+
+            // Add initial notification when analytics loads
+            addNotification({
+              title: "Analytics Dashboard Ready",
+              message: "Your portfolio data has been loaded and analyzed.",
+              severity: "info",
+              source: "analytics",
+            })
+
+            // Schedule some demo notifications
+            setTimeout(() => {
+              addNotification({
+                title: "Unusual Market Activity",
+                message: "We've detected unusual price movements in the real estate sector.",
+                severity: "warning",
+                source: "market-analysis",
+                action: {
+                  label: "View Details",
+                  onClick: () => setActiveTab("market"),
+                },
+              })
+            }, 30000)
+
+            setTimeout(() => {
+              addNotification({
+                title: "Portfolio Milestone",
+                message: "Your portfolio has reached $4.25M in total value!",
+                severity: "success",
+                source: "portfolio-tracker",
+                action: {
+                  label: "View Portfolio",
+                  onClick: () => setActiveTab("portfolio"),
+                },
+              })
+            }, 60000)
+          }, 200)
           return 100
         }
         return prev + 5
@@ -53,7 +92,7 @@ export function AnalyticsTerminal() {
     }, 100)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [addNotification])
 
   const handleTabChange = (tab: "overview" | "portfolio" | "market" | "transactions" | "alerts") => {
     setActiveTab(tab)
@@ -63,12 +102,28 @@ export function AnalyticsTerminal() {
   const handleTimeRangeChange = (range: "1d" | "1w" | "1m" | "3m" | "6m" | "1y" | "all") => {
     setTimeRange(range)
     addToHistory(`timerange --set=${range}`)
+
+    // Add notification when time range changes
+    addNotification({
+      title: "Time Range Updated",
+      message: `Analytics view updated to ${range.toUpperCase()} time range.`,
+      severity: "info",
+      source: "analytics",
+    })
   }
 
   const handleRefresh = () => {
     setIsLoading(true)
     setLoadingProgress(0)
     addToHistory("refresh --data")
+
+    // Add notification when data is refreshed
+    addNotification({
+      title: "Data Refresh Initiated",
+      message: "Fetching the latest market and portfolio data...",
+      severity: "info",
+      source: "data-service",
+    })
   }
 
   if (isLoading) {
@@ -129,6 +184,14 @@ export function AnalyticsTerminal() {
             variant="outline"
             size="sm"
             className="h-8 bg-zinc-900 border-zinc-700 hover:bg-zinc-800 text-zinc-300 whitespace-nowrap"
+            onClick={() => {
+              addNotification({
+                title: "Export Complete",
+                message: "Your analytics data has been exported successfully.",
+                severity: "success",
+                source: "export-service",
+              })
+            }}
           >
             <Download className="h-3.5 w-3.5 mr-1" />
             Export

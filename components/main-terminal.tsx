@@ -13,6 +13,9 @@ import { WalletView } from "@/components/views/wallet-view"
 import { SettingsView } from "@/components/views/settings-view"
 import { ProfileView } from "@/components/views/profile-view"
 import { AssetCategoryView } from "@/components/views/asset-category-view"
+import { LendingView } from "@/components/views/lending-view"
+import { AssetDetailView } from "@/components/views/asset-detail-view"
+import { AssetComparisonView } from "@/components/views/asset-comparison-view"
 
 export function MainTerminal() {
   const { activeTab } = useTerminal()
@@ -54,9 +57,13 @@ export function MainTerminal() {
       {activeTab === "wallet" && <WalletView />}
       {activeTab === "settings" && <SettingsView />}
       {activeTab === "profile" && <ProfileView />}
-      {(activeTab === "real-estate" || activeTab === "vehicles" || activeTab === "equipment") && (
-        <AssetCategoryView category={activeTab} />
-      )}
+      {activeTab === "lending" && <LendingView />}
+      {activeTab === "asset-detail" && <AssetDetailView />}
+      {activeTab === "asset-comparison" && <AssetComparisonView />}
+      {(activeTab === "real-estate" ||
+        activeTab === "vehicles" ||
+        activeTab === "equipment" ||
+        activeTab === "collection") && <AssetCategoryView category={activeTab} />}
     </div>
   )
 }

@@ -63,12 +63,14 @@ export function TerminalApp() {
 
     // Check if we should collapse sidebar on mobile
     const checkMobile = () => {
-      if (window.innerWidth < 768) {
+      if (window.innerWidth < 1024) {
         setSidebarCollapsed(true)
-        if (window.innerWidth < 640) {
+        if (window.innerWidth < 768) {
+          // Default to hidden sidebar on mobile and small tablets
           setSidebarVisible(false)
         }
       } else {
+        // On larger screens, always show sidebar (expanded or collapsed)
         setSidebarVisible(true)
       }
     }
@@ -110,28 +112,39 @@ export function TerminalApp() {
     )
   }
 
+  const toggleSidebar = () => {
+    if (window.innerWidth < 640) {
+      setSidebarVisible(!sidebarVisible)
+    } else if (window.innerWidth < 1024) {
+      // For tablet view, toggle visibility instead of just collapsing
+      setSidebarVisible(!sidebarVisible)
+    } else {
+      setSidebarCollapsed(!sidebarCollapsed)
+    }
+  }
+
   return (
     <div className="fixed inset-0 overflow-hidden terminal-window">
-      <TerminalHeader
-        onToggleSidebar={() => {
-          if (window.innerWidth < 640) {
-            setSidebarVisible(!sidebarVisible)
-          } else {
-            setSidebarCollapsed(!sidebarCollapsed)
-          }
-        }}
-        sidebarVisible={sidebarVisible}
-      />
-      <div className="flex flex-1 overflow-hidden h-[calc(100%-4rem)]">
+      <TerminalHeader onToggleSidebar={toggleSidebar} sidebarVisible={sidebarVisible} />
+      <div className="flex flex-1 overflow-hidden h-[calc(100%-4rem)] relative">
+        {/* Semi-transparent overlay for mobile/tablet */}
+        {sidebarVisible && window.innerWidth < 1024 && (
+          <div
+            className="fixed inset-0 bg-black/60 z-30 lg:hidden transition-opacity duration-300 ease-in-out"
+            onClick={() => setSidebarVisible(false)}
+            aria-hidden="true"
+          />
+        )}
+
         {sidebarVisible && (
           <TerminalSidebar
             collapsed={sidebarCollapsed}
             onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-            onClose={() => window.innerWidth < 640 && setSidebarVisible(false)}
+            onClose={() => setSidebarVisible(false)}
           />
         )}
         <div className="flex-1 flex flex-col overflow-hidden relative">
-          <div className="flex-1 overflow-hidden terminal-content-wrapper">
+          <div className="flex-1 overflow-hidden terminal-content-wrapper pb-8">
             {activeView === "dashboard" && <DashboardView />}
             {activeView === "analytics" && <AnalyticsView />}
             {activeView === "lending" && <LendingView />}
