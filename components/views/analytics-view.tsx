@@ -3,29 +3,32 @@
 import { useState } from "react"
 import { AssetValueChart } from "@/components/analytics/asset-value-chart"
 import { AssetDistributionChart } from "@/components/analytics/asset-distribution-chart"
-import { AssetPerformanceTable } from "@/components/analytics/asset-performance-table"
 import { MarketTrendsChart } from "@/components/analytics/market-trends-chart"
 import { TransactionLog } from "@/components/analytics/transaction-log"
 import { PortfolioSummary } from "@/components/analytics/portfolio-summary"
 import { AlertsPanel } from "@/components/analytics/alerts-panel"
 import { CommandLine } from "@/components/analytics/command-line"
+import { ProtocolMetrics } from "@/components/analytics/protocol-metrics"
+import { MarketIndicators } from "@/components/analytics/market-indicators"
+import { ProtocolHealth } from "@/components/analytics/protocol-health"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Search, Filter, RefreshCw, Download, Calendar, ChevronDown } from "lucide-react"
 import { useTerminal } from "@/components/terminal/terminal-provider"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { ProtocolRiskMetrics } from "@/components/analytics/protocol-risk-metrics"
+import { SecurityAnalysis } from "@/components/analytics/security-analysis"
+import { SecurityAuditHistory } from "@/components/analytics/security-audit-history"
 
 export function AnalyticsView() {
   const { addToHistory } = useTerminal()
   const [timeRange, setTimeRange] = useState<"1d" | "1w" | "1m" | "3m" | "6m" | "1y" | "all">("1m")
-  const [activeTab, setActiveTab] = useState<"overview" | "portfolio" | "market" | "transactions" | "alerts">(
-    "overview",
-  )
+  const [activeTab, setActiveTab] = useState<"overview" | "protocol" | "market" | "transactions" | "health">("overview")
   const [isLoading, setIsLoading] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
-  const handleTabChange = (tab: "overview" | "portfolio" | "market" | "transactions" | "alerts") => {
+  const handleTabChange = (tab: "overview" | "protocol" | "market" | "transactions" | "health") => {
     setActiveTab(tab)
     addToHistory(`view --section=${tab}`)
   }
@@ -49,8 +52,8 @@ export function AnalyticsView() {
     <div className="p-4">
       <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
-          <h1 className="text-lg font-semibold tracking-tight">Analytics Terminal</h1>
-          <p className="text-sm text-zinc-400 mt-1">Advanced data analysis and visualization</p>
+          <h1 className="text-lg font-semibold tracking-tight">Protocol Analytics Terminal</h1>
+          <p className="text-sm text-zinc-400 mt-1">Protocol and market-wide data analysis</p>
         </div>
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
           <div className="relative">
@@ -94,10 +97,10 @@ export function AnalyticsView() {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem onClick={() => handleTabChange("overview")}>Overview</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleTabChange("portfolio")}>Portfolio</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleTabChange("protocol")}>Protocol</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleTabChange("market")}>Market</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleTabChange("transactions")}>Transactions</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleTabChange("alerts")}>Alerts</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleTabChange("health")}>Health</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
@@ -109,10 +112,10 @@ export function AnalyticsView() {
                 Overview
               </TabsTrigger>
               <TabsTrigger
-                value="portfolio"
-                className={`text-xs px-3 h-8 ${activeTab === "portfolio" ? "bg-zinc-800 text-white" : "text-zinc-400"}`}
+                value="protocol"
+                className={`text-xs px-3 h-8 ${activeTab === "protocol" ? "bg-zinc-800 text-white" : "text-zinc-400"}`}
               >
-                Portfolio
+                Protocol
               </TabsTrigger>
               <TabsTrigger
                 value="market"
@@ -129,10 +132,10 @@ export function AnalyticsView() {
                 Transactions
               </TabsTrigger>
               <TabsTrigger
-                value="alerts"
-                className={`text-xs px-3 h-8 ${activeTab === "alerts" ? "bg-zinc-800 text-white" : "text-zinc-400"}`}
+                value="health"
+                className={`text-xs px-3 h-8 ${activeTab === "health" ? "bg-zinc-800 text-white" : "text-zinc-400"}`}
               >
-                Alerts
+                Health
               </TabsTrigger>
             </TabsList>
           )}
@@ -225,14 +228,14 @@ export function AnalyticsView() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="terminal-card lg:col-span-2">
-              <h3 className="text-xs font-medium mb-4">PORTFOLIO PERFORMANCE</h3>
+              <h3 className="text-xs font-medium mb-4">PROTOCOL METRICS</h3>
               <div className="h-[400px]">
-                <AssetValueChart timeRange={timeRange} detailed />
+                <ProtocolMetrics timeRange={timeRange} detailed />
               </div>
             </div>
 
             <div className="terminal-card">
-              <h3 className="text-xs font-medium mb-4">ASSET ALLOCATION</h3>
+              <h3 className="text-xs font-medium mb-4">ASSET DISTRIBUTION</h3>
               <div className="h-[400px]">
                 <AssetDistributionChart detailed />
               </div>
@@ -254,17 +257,17 @@ export function AnalyticsView() {
           </div>
 
           <div className="terminal-card">
-            <h3 className="text-xs font-medium mb-4">ASSET PERFORMANCE</h3>
-            <AssetPerformanceTable />
+            <h3 className="text-xs font-medium mb-4">MARKET INDICATORS</h3>
+            <MarketIndicators />
           </div>
         </TabsContent>
 
-        <TabsContent value="portfolio" className="mt-0 space-y-6">
+        <TabsContent value="protocol" className="mt-0 space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="terminal-card lg:col-span-2">
-              <h3 className="text-xs font-medium mb-4">PORTFOLIO PERFORMANCE</h3>
+              <h3 className="text-xs font-medium mb-4">PROTOCOL PERFORMANCE</h3>
               <div className="h-[500px]">
-                <AssetValueChart timeRange={timeRange} detailed />
+                <ProtocolMetrics timeRange={timeRange} detailed />
               </div>
             </div>
 
@@ -277,8 +280,8 @@ export function AnalyticsView() {
           </div>
 
           <div className="terminal-card">
-            <h3 className="text-xs font-medium mb-4">DETAILED ASSET PERFORMANCE</h3>
-            <AssetPerformanceTable detailed />
+            <h3 className="text-xs font-medium mb-4">PROTOCOL HEALTH</h3>
+            <ProtocolHealth detailed />
           </div>
         </TabsContent>
 
@@ -288,6 +291,11 @@ export function AnalyticsView() {
             <div className="h-[400px]">
               <MarketTrendsChart timeRange={timeRange} detailed />
             </div>
+          </div>
+
+          <div className="terminal-card">
+            <h3 className="text-xs font-medium mb-4">MARKET INDICATORS</h3>
+            <MarketIndicators detailed />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -310,7 +318,7 @@ export function AnalyticsView() {
         <TabsContent value="transactions" className="mt-0 space-y-6">
           <div className="terminal-card">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xs font-medium">TRANSACTION HISTORY</h3>
+              <h3 className="text-xs font-medium">PROTOCOL TRANSACTIONS</h3>
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" className="h-7 text-xs">
                   <Filter className="h-3 w-3 mr-1" />
@@ -326,7 +334,27 @@ export function AnalyticsView() {
           </div>
         </TabsContent>
 
-        <TabsContent value="alerts" className="mt-0 space-y-6">
+        <TabsContent value="health" className="mt-0 space-y-6">
+          <div className="terminal-card">
+            <h3 className="text-xs font-medium mb-4">PROTOCOL HEALTH METRICS</h3>
+            <ProtocolHealth detailed />
+          </div>
+
+          <div className="terminal-card">
+            <h3 className="text-xs font-medium mb-4">PROTOCOL RISK ASSESSMENT</h3>
+            <ProtocolRiskMetrics />
+          </div>
+
+          <div className="terminal-card">
+            <h3 className="text-xs font-medium mb-4">SECURITY ANALYSIS</h3>
+            <SecurityAnalysis />
+          </div>
+
+          <div className="terminal-card">
+            <h3 className="text-xs font-medium mb-4">SECURITY AUDIT HISTORY</h3>
+            <SecurityAuditHistory />
+          </div>
+
           <div className="terminal-card">
             <h3 className="text-xs font-medium mb-4">ALERTS & NOTIFICATIONS</h3>
             <AlertsPanel detailed />

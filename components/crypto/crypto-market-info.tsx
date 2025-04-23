@@ -1,10 +1,10 @@
 "use client"
 
-import { RefreshCw } from "lucide-react"
+import { RefreshCw, AlertCircle } from "lucide-react"
 import { useCryptoPrices, type CryptoPrice } from "@/hooks/use-crypto-prices"
 
 export function CryptoMarketInfo() {
-  const { ethereum, bitcoin, refresh } = useCryptoPrices()
+  const { ethereum, bitcoin, refresh, error, isLoading } = useCryptoPrices()
 
   return (
     <div className="terminal-card">
@@ -15,9 +15,16 @@ export function CryptoMarketInfo() {
           className="text-zinc-500 hover:text-white transition-colors"
           aria-label="Refresh crypto prices"
         >
-          <RefreshCw className="h-3.5 w-3.5" />
+          <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin" : ""}`} />
         </button>
       </div>
+
+      {error && (
+        <div className="flex items-center gap-2 text-amber-400 text-xs mb-3">
+          <AlertCircle className="h-3.5 w-3.5" />
+          <span>Using estimated prices</span>
+        </div>
+      )}
 
       <div className="space-y-3">
         <CryptoMarketRow crypto={ethereum} />

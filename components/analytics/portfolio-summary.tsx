@@ -10,37 +10,37 @@ interface PortfolioSummaryProps {
 export function PortfolioSummary({ detailed = false }: PortfolioSummaryProps) {
   const metrics = [
     {
-      name: "Total Assets",
-      value: "24",
-      change: "+3",
+      name: "Total Protocol TVL",
+      value: "$142.8M",
+      change: "+8.4%",
       trend: "up",
     },
     {
-      name: "Total Value",
-      value: "$4.25M",
-      change: "+12.4%",
+      name: "Daily Volume",
+      value: "$12.5M",
+      change: "+15.2%",
       trend: "up",
     },
     {
-      name: "Monthly Change",
-      value: "+$125K",
-      change: "+3.2%",
+      name: "Active Assets",
+      value: "1,248",
+      change: "+124",
       trend: "up",
     },
     {
-      name: "Annual Return",
+      name: "Protocol Revenue",
       value: "$510K",
       change: "+13.7%",
       trend: "up",
     },
     {
       name: "Pending Transfers",
-      value: "3",
-      change: "-1",
+      value: "342",
+      change: "-28",
       trend: "down",
     },
     {
-      name: "Verification Rate",
+      name: "Network Health",
       value: "98%",
       change: "+2%",
       trend: "up",
@@ -49,7 +49,7 @@ export function PortfolioSummary({ detailed = false }: PortfolioSummaryProps) {
 
   return (
     <div className="terminal-card">
-      <h3 className="text-xs font-medium mb-4">PORTFOLIO SUMMARY</h3>
+      <h3 className="text-xs font-medium mb-4">PROTOCOL SUMMARY</h3>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {metrics.map((metric) => (
           <div key={metric.name} className="space-y-1">

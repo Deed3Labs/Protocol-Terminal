@@ -277,3 +277,35 @@
 .command-palette-enter {
   animation: scaleIn 0.2s ease-out;
 }
+
+/* Command palette improvements */
+.cmdk-group {
+  margin-bottom: 8px;
+}
+
+.cmdk-group-heading {
+  color: var(--primary);
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 640px) {
+  .cmdk-input {
+    font-size: 14px;
+  }
+
+  .cmdk-item {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+}
+
+/* Improve command palette mobile responsiveness */
+@media (max-width: 640px) {
+  [cmdk-root] {
+    max-height: 80vh;
+  }
+
+  [cmdk-list] {
+    max-height: 60vh;
+  }
+}

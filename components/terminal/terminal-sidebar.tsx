@@ -4,12 +4,10 @@ import { useRouter, usePathname } from "next/navigation"
 import {
   BarChart3,
   Building2,
-  Car,
   FileCheck,
   Home,
   PlusCircle,
   Settings,
-  Tractor,
   Wallet,
   ArrowLeftRight,
   User,
@@ -18,6 +16,7 @@ import {
   ChevronRight,
   X,
   DollarSign,
+  Search,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -33,11 +32,10 @@ interface TerminalSidebarProps {
 export function TerminalSidebar({ collapsed = false, onToggle, onClose }: TerminalSidebarProps) {
   const router = useRouter()
   const pathname = usePathname()
-  const { setActiveTab, activeView, setActiveView, setLastCommand, setCurrentPath, addToHistory } = useTerminal()
+  const { activeView, setActiveView, setLastCommand, setCurrentPath, addToHistory } = useTerminal()
 
   const handleNavigation = (view: string, command: string) => {
-    // Set the active tab and view
-    setActiveTab(view)
+    // Set the active view
     setActiveView(view as any)
 
     // Update command history
@@ -46,7 +44,9 @@ export function TerminalSidebar({ collapsed = false, onToggle, onClose }: Termin
     }
 
     // Add to command history
-    addToHistory(command)
+    if (typeof addToHistory === "function") {
+      addToHistory(command)
+    }
 
     // Update current path based on view
     if (typeof setCurrentPath === "function") {
@@ -111,6 +111,20 @@ export function TerminalSidebar({ collapsed = false, onToggle, onClose }: Termin
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="right">Analytics</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={cn("h-8 w-8", activeView === "explore" && "bg-zinc-800 text-white")}
+                  onClick={() => handleNavigation("explore", "explore --assets")}
+                >
+                  <Search className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">Explore Assets</TooltipContent>
             </Tooltip>
 
             <Tooltip>
@@ -289,6 +303,15 @@ export function TerminalSidebar({ collapsed = false, onToggle, onClose }: Termin
         <Button
           variant="ghost"
           size="sm"
+          className={cn("justify-start text-xs terminal-tab", activeView === "explore" && "terminal-tab-active")}
+          onClick={() => handleNavigation("explore", "explore --assets")}
+        >
+          <Search className="h-3.5 w-3.5 mr-2" />
+          Explore Assets
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
           className={cn("justify-start text-xs terminal-tab", activeView === "lending" && "terminal-tab-active")}
           onClick={() => handleNavigation("lending", "lending --view")}
         >
@@ -331,38 +354,6 @@ export function TerminalSidebar({ collapsed = false, onToggle, onClose }: Termin
           <FileCheck className="h-3.5 w-3.5 mr-2" />
           Validate Asset
         </Button>
-      </div>
-      <div className="mt-6 pt-6 border-t border-zinc-800">
-        <h3 className="px-2 text-[10px] font-medium text-zinc-500 mb-2">ASSET CATEGORIES</h3>
-        <div className="flex flex-col gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            className={cn("justify-start text-xs terminal-tab", activeView === "real-estate" && "terminal-tab-active")}
-            onClick={() => handleNavigation("real-estate", "filter --category=real-estate")}
-          >
-            <Building2 className="h-3.5 w-3.5 mr-2" />
-            Real Estate
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={cn("justify-start text-xs terminal-tab", activeView === "vehicles" && "terminal-tab-active")}
-            onClick={() => handleNavigation("vehicles", "filter --category=vehicles")}
-          >
-            <Car className="h-3.5 w-3.5 mr-2" />
-            Vehicles
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={cn("justify-start text-xs terminal-tab", activeView === "equipment" && "terminal-tab-active")}
-            onClick={() => handleNavigation("equipment", "filter --category=equipment")}
-          >
-            <Tractor className="h-3.5 w-3.5 mr-2" />
-            Equipment
-          </Button>
-        </div>
       </div>
       <div className="mt-auto flex flex-col gap-1 pt-6 border-t border-zinc-800">
         <Button

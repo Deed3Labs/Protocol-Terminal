@@ -3,15 +3,14 @@
 import {
   BarChart3,
   Building2,
-  Car,
   FileCheck,
   Home,
   PlusCircle,
   Settings,
-  Tractor,
   Wallet,
   ArrowLeftRight,
   Banknote,
+  MapPin,
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -112,42 +111,18 @@ export function DashboardSidebar() {
           </Button>
         </div>
         <div className="mt-6 pt-6 border-t">
-          <h3 className="px-3 text-xs font-medium text-muted-foreground mb-2">Asset Categories</h3>
+          <h3 className="px-3 text-xs font-medium text-muted-foreground mb-2">Navigation</h3>
           <div className="flex flex-col gap-1">
             <Button asChild variant="ghost" className="justify-start">
               <Link
-                href="/category/real-estate"
+                href="/explore"
                 className={cn(
                   "flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:text-foreground",
-                  pathname === "/category/real-estate" && "bg-muted text-foreground",
+                  pathname === "/explore" && "bg-muted text-foreground",
                 )}
               >
-                <Building2 className="h-5 w-5" />
-                Real Estate
-              </Link>
-            </Button>
-            <Button asChild variant="ghost" className="justify-start">
-              <Link
-                href="/category/vehicles"
-                className={cn(
-                  "flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:text-foreground",
-                  pathname === "/category/vehicles" && "bg-muted text-foreground",
-                )}
-              >
-                <Car className="h-5 w-5" />
-                Vehicles
-              </Link>
-            </Button>
-            <Button asChild variant="ghost" className="justify-start">
-              <Link
-                href="/category/equipment"
-                className={cn(
-                  "flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:text-foreground",
-                  pathname === "/category/equipment" && "bg-muted text-foreground",
-                )}
-              >
-                <Tractor className="h-5 w-5" />
-                Equipment
+                <MapPin className="h-5 w-5" />
+                Explore Assets
               </Link>
             </Button>
           </div>

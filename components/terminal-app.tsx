@@ -18,6 +18,7 @@ import { SettingsView } from "@/components/views/settings-view"
 import { AssetCategoryView } from "@/components/views/asset-category-view"
 import { CommandPalette } from "@/components/terminal/command-palette"
 import { LendingView } from "@/components/views/lending-view"
+import { ExploreView } from "@/components/views/explore-view"
 
 export function TerminalApp() {
   const {
@@ -155,6 +156,7 @@ export function TerminalApp() {
             {activeView === "wallet" && <WalletView />}
             {activeView === "settings" && <SettingsView />}
             {activeView === "profile" && <ProfileView />}
+            {activeView === "explore" && <ExploreView />}
             {(activeView === "real-estate" || activeView === "vehicles" || activeView === "equipment") && (
               <AssetCategoryView category={activeView} />
             )}

@@ -1,59 +1,41 @@
 "use client"
 
-import type React from "react"
-import { createContext, useState, useContext, type ReactNode, type Dispatch, type SetStateAction } from "react"
-import type { AssetType } from "../../types"
+import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { usePathname } from "next/navigation"
+
+type ActiveView =
+  | "dashboard"
+  | "analytics"
+  | "portfolio"
+  | "market"
+  | "transactions"
+  | "alerts"
+  | "settings"
+  | "profile"
+  | "wallet"
+  | "tokenize"
+  | "transfer"
+  | "validate"
+  | "lending"
+  | "asset-detail"
+  | "asset-comparison"
+  | "real-estate"
+  | "vehicles"
+  | "equipment"
+  | "collection"
+  | "explore"
 
 interface TerminalContextType {
-  activeTab: string
-  setActiveTab: Dispatch<SetStateAction<string>>
-  activeView:
-    | "dashboard"
-    | "analytics"
-    | "portfolio"
-    | "tokenize"
-    | "validate"
-    | "market"
-    | "transactions"
-    | "wallet"
-    | "settings"
-    | "profile"
-    | "my-assets"
-    | "transfer"
-    | "alerts"
-    | "lending"
-    | "asset-detail"
-    | "asset-comparison"
-    | "real-estate"
-    | "vehicles"
-    | "equipment"
-    | "collection"
-  setActiveView: Dispatch<SetStateAction<TerminalContextType["activeView"]>>
-  selectedAssets: AssetType[]
-  setSelectedAssets: Dispatch<SetStateAction<AssetType[]>>
-  isSidebarOpen: boolean
-  setSidebarOpen: Dispatch<SetStateAction<boolean>>
-  isAlertsOpen: boolean
-  setAlertsOpen: Dispatch<SetStateAction<boolean>>
-  isSettingsOpen: boolean
-  setSettingsOpen: Dispatch<SetStateAction<boolean>>
-  isProfileOpen: boolean
-  setProfileOpen: Dispatch<SetStateAction<boolean>>
-  isAssetDetailOpen: boolean
-  setAssetDetailOpen: Dispatch<SetStateAction<boolean>>
-  selectedAsset: AssetType | null
-  setSelectedAsset: Dispatch<SetStateAction<AssetType | null>>
-  isTransferModalOpen: boolean
-  setTransferModalOpen: Dispatch<SetStateAction<boolean>>
-  lastCommand: string
-  setLastCommand: Dispatch<SetStateAction<string>>
   currentPath: string
-  setCurrentPath: Dispatch<SetStateAction<string>>
+  setCurrentPath: (path: string) => void
   commandHistory: string[]
   addToHistory: (command: string) => void
+  clearHistory: () => void
   isConnected: boolean
   connect: () => void
   disconnect: () => void
+  activeView: ActiveView
+  setActiveView: (view: ActiveView) => void
   isCommandPaletteOpen: boolean
   openCommandPalette: () => void
   closeCommandPalette: () => void
@@ -61,69 +43,72 @@ interface TerminalContextType {
 
 const TerminalContext = createContext<TerminalContextType | undefined>(undefined)
 
-interface TerminalProviderProps {
-  children: ReactNode
-}
-
-export const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
-  const [activeTab, setActiveTab] = useState<string>("dashboard")
-  const [activeView, setActiveView] = useState<TerminalContextType["activeView"]>("dashboard")
-  const [selectedAssets, setSelectedAssets] = useState<AssetType[]>([])
-  const [isSidebarOpen, setSidebarOpen] = useState<boolean>(true)
-  const [isAlertsOpen, setAlertsOpen] = useState<boolean>(false)
-  const [isSettingsOpen, setSettingsOpen] = useState<boolean>(false)
-  const [isProfileOpen, setProfileOpen] = useState<boolean>(false)
-  const [isAssetDetailOpen, setAssetDetailOpen] = useState<boolean>(false)
-  const [selectedAsset, setSelectedAsset] = useState<AssetType | null>(null)
-  const [isTransferModalOpen, setTransferModalOpen] = useState<boolean>(false)
-  const [lastCommand, setLastCommand] = useState<string>("")
-  const [currentPath, setCurrentPath] = useState<string>("/")
+export function TerminalProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname()
+  const [currentPath, setCurrentPath] = useState("/home")
   const [commandHistory, setCommandHistory] = useState<string[]>([])
-  const [isConnected, setIsConnected] = useState<boolean>(false)
-  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState<boolean>(false)
+  const [isConnected, setIsConnected] = useState(false)
+  const [activeView, setActiveView] = useState<ActiveView>("dashboard")
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false)
 
-  const connect = () => setIsConnected(true)
-  const disconnect = () => setIsConnected(false)
+  useEffect(() => {
+    // Set active view based on pathname
+    if (pathname === "/") {
+      setActiveView("dashboard")
+    } else if (pathname === "/analytics") {
+      setActiveView("analytics")
+    } else if (pathname === "/collection") {
+      setActiveView("collection")
+    } else if (pathname === "/mint") {
+      setActiveView("tokenize")
+    } else if (pathname === "/transfer") {
+      setActiveView("transfer")
+    } else if (pathname === "/validate") {
+      setActiveView("validate")
+    } else if (pathname === "/lending") {
+      setActiveView("lending")
+    } else if (pathname === "/explore") {
+      setActiveView("explore")
+    }
+  }, [pathname])
 
   const addToHistory = (command: string) => {
     setCommandHistory((prev) => [...prev, command])
   }
 
-  const openCommandPalette = () => setIsCommandPaletteOpen(true)
-  const closeCommandPalette = () => setIsCommandPaletteOpen(false)
+  const clearHistory = () => {
+    setCommandHistory([])
+  }
+
+  const connect = () => {
+    setIsConnected(true)
+  }
+
+  const disconnect = () => {
+    setIsConnected(false)
+  }
+
+  const openCommandPalette = () => {
+    setIsCommandPaletteOpen(true)
+  }
+
+  const closeCommandPalette = () => {
+    setIsCommandPaletteOpen(false)
+  }
 
   return (
     <TerminalContext.Provider
       value={{
-        activeTab,
-        setActiveTab,
-        activeView,
-        setActiveView,
-        selectedAssets,
-        setSelectedAssets,
-        isSidebarOpen,
-        setSidebarOpen,
-        isAlertsOpen,
-        setAlertsOpen,
-        isSettingsOpen,
-        setSettingsOpen,
-        isProfileOpen,
-        setProfileOpen,
-        isAssetDetailOpen,
-        setAssetDetailOpen,
-        selectedAsset,
-        setSelectedAsset,
-        isTransferModalOpen,
-        setTransferModalOpen,
-        lastCommand,
-        setLastCommand,
         currentPath,
         setCurrentPath,
         commandHistory,
         addToHistory,
+        clearHistory,
         isConnected,
         connect,
         disconnect,
+        activeView,
+        setActiveView,
         isCommandPaletteOpen,
         openCommandPalette,
         closeCommandPalette,
@@ -134,9 +119,9 @@ export const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) 
   )
 }
 
-export const useTerminal = () => {
+export function useTerminal() {
   const context = useContext(TerminalContext)
-  if (!context) {
+  if (context === undefined) {
     throw new Error("useTerminal must be used within a TerminalProvider")
   }
   return context
